@@ -9,18 +9,18 @@ export enum ParamterType {
   integer = 'integer',
   string = 'string',
   boolean = 'boolean',
-  file = 'file'
+  file = 'file',
 }
 export enum ParamFormat {
   date = 'date',
   dateTime = 'date-time',
   password = 'passsword',
-  int32 = 'int32'
+  int32 = 'int32',
 }
 export enum ApplicationType {
   XML = 'application/xml',
   JSON = 'application/json',
-  FormData = 'multipart/form-data'
+  FormData = 'multipart/form-data',
 }
 export type Param = {
   desc: string;
@@ -32,21 +32,21 @@ export type Param = {
   schema?: any;
 };
 
-export const getClazz = (target) =>
+export const getClazz: ClassDecorator = (target: any) =>
   (target.meta = target.meta || { baseUrl: '', routes: {} });
-export const getMethod = (target, methodName: string): Method => {
+export const getMethod = (target: any, methodName: string): Method => {
   const meta = getClazz(target);
   const methodData =
     meta.routes[methodName] ||
     (meta.routes[methodName] = {
       subUrl: '',
       httpMethod: '',
-      params: []
+      params: [],
     });
   return methodData;
 };
 export const Route = (baseUrl: string) => {
-  return function(target) {
+  return function (target: any) {
     const meta = getClazz(target.prototype);
     meta.baseUrl = baseUrl;
   };
@@ -56,12 +56,16 @@ enum HttpMethod {
   GET = 'get',
   POST = 'post',
   DELETE = 'delete',
-  PUT = 'put'
+  PUT = 'put',
 }
 
 const methodFactory = (httpMethod: string) => {
   return (url: string) => {
-    return (target, methodName: string, descripitor: PropertyDescriptor) => {
+    return (
+      target: any,
+      methodName: string,
+      descripitor: PropertyDescriptor
+    ) => {
       const meta = getMethod(target, methodName);
       meta.httpMethod = httpMethod;
       meta.subUrl = url;
@@ -82,8 +86,14 @@ export enum ParamterIn {
   Query = 'query',
   FormData = 'formData',
   Header = 'header',
-  Body = 'body'
+  Body = 'body',
 }
+
+type Obj = {
+  properties: {
+    [key: string]: Object;
+  };
+};
 export const Paramter = (
   paramIn: string,
   paramName?: string,
@@ -91,15 +101,15 @@ export const Paramter = (
   paramType?: string,
   required?: boolean
 ) => {
-  return (target, methdName: string, paramIndex: number) => {
+  return (target: any, methdName: string, paramIndex: number) => {
     const meta = getMethod(target, methdName);
     if (paramIn === ParamterIn.Body) {
-      const obj = {
-        properties: {}
+      const obj: Obj = {
+        properties: {},
       };
       obj.properties[paramName!] = {
         type: paramType,
-        description: desc
+        description: desc,
       };
       meta.params.push({
         name: paramName ? paramName : paramIn,
@@ -108,7 +118,7 @@ export const Paramter = (
         in: paramIn,
         desc: desc!,
         required: required!,
-        schema: obj
+        schema: obj,
       });
     } else {
       meta.params.push({
@@ -117,7 +127,7 @@ export const Paramter = (
         type: paramType!,
         in: paramIn,
         desc: desc!,
-        required: required!
+        required: required!,
       });
     }
   };
@@ -128,21 +138,21 @@ export interface ISchema {
 }
 
 export const Summary = (summary: string) => {
-  return (target, methdName: string) => {
+  return (target: any, methdName: string) => {
     const meta = getClazz(target);
     const methodData: Method = meta.routes[methdName];
     methodData.summary = summary;
   };
 };
 export const Description = (desc: string) => {
-  return (target, methdName: string) => {
+  return (target: any, methdName: string) => {
     const meta = getClazz(target);
     const methodData: Method = meta.routes[methdName];
     methodData.description = desc || '';
   };
 };
 export const Produces = (...produces: ApplicationType[]) => {
-  return (target, methdName: string) => {
+  return (target: any, methdName: string) => {
     const meta = getClazz(target);
     const methodData: Method = meta.routes[methdName];
     methodData.produces = produces;
@@ -150,7 +160,7 @@ export const Produces = (...produces: ApplicationType[]) => {
 };
 
 export const Consumes = (...consumes: ApplicationType[]) => {
-  return (target, methdName: string) => {
+  return (target: any, methdName: string) => {
     const meta = getClazz(target);
     const methodData: Method = meta.routes[methdName];
     methodData.consumes = consumes;
@@ -164,12 +174,12 @@ const ContextParamFactory = (paramType: string) => {
 export const Ctx = ContextParamFactory('ctx');
 
 export const RequestBody = (name: string, description: string) => {
-  return (target, methdName: string) => {
+  return (target: any, methdName: string) => {
     const meta = getClazz(target);
     const methodData: Method = meta.routes[methdName];
     methodData.requestBody = {
       name,
-      description
+      description,
     };
   };
 };

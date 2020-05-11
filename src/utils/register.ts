@@ -1,25 +1,24 @@
-import * as fs from 'fs';
-import { IncomingMessage as OriginalIM } from 'http';
-import { Context } from 'koa';
-import * as multer from 'koa-multer';
-import * as Router from 'koa-router';
-import * as path from 'path';
+import fs from 'fs';
+import Application, { Context } from 'koa';
+import multer from 'koa-multer';
+import Router from 'koa-router';
+import path from 'path';
 
 import { getClazz, Method, Param, ParamterIn } from '../decorators/service';
 import { getDocs } from '../decorators/swagger';
 import { IMethod, IParameters, ISwagger } from '../interface/swagger';
-import { File, MulterIncomingMessage, Field } from 'koa-multer';
+import { MulterIncomingMessage, Field } from 'koa-multer';
 
 var storage = multer.diskStorage({
   //文件保存路径
-  destination: function(req, file, cb) {
+  destination: function (req, file, cb) {
     cb(null, 'uploads/');
   },
   //修改文件名称
-  filename: function(req, file, cb) {
+  filename: function (req, file, cb) {
     var fileFormat = file.originalname.split('.'); //以点分割成数组，数组的最后一项就是后缀名
     cb(null, Date.now() + '.' + fileFormat[fileFormat.length - 1]);
-  }
+  },
 });
 
 var upload = multer({ storage: storage });
@@ -37,7 +36,7 @@ function extractParameters(ctx: Context, params: Param[]) {
         ? ctx.request.body[paramName]
         : req.files[paramName];
     },
-    ctx: () => ctx
+    ctx: () => ctx,
   };
   params.forEach((param) => {
     args.push(paramsMap[param.in](param.name, param.type));
@@ -46,14 +45,14 @@ function extractParameters(ctx: Context, params: Param[]) {
 }
 const urlParse = (url: string) => {
   return url
-    .replace(/\:(\w+)/, function($1) {
+    .replace(/\:(\w+)/, function ($1) {
       let arr = $1.split('');
       arr.shift();
       return '{' + arr.join('') + '}';
     })
     .replace(/\/$/, '');
 };
-const handlePath = (target, prefix: string, meta: Method) => {
+const handlePath = (target: any, prefix: string, meta: Method) => {
   const docs: ISwagger = getDocs(target);
   const parseUrl = urlParse(prefix + meta.subUrl);
   const route = (docs.paths[parseUrl] = docs.paths[parseUrl] || {});
@@ -75,7 +74,7 @@ const handlePath = (target, prefix: string, meta: Method) => {
       if (hasBody > -1) {
         method.parameters[hasBody].schema.properties[param.name] = {
           type: param.type,
-          description: param.desc
+          description: param.desc,
         };
       } else {
         paramter = {
@@ -83,7 +82,7 @@ const handlePath = (target, prefix: string, meta: Method) => {
           name: requestBody.name,
           required: param.required,
           description: requestBody.description,
-          schema: param.schema
+          schema: param.schema,
         };
         method.parameters.push(paramter);
       }
@@ -93,7 +92,7 @@ const handlePath = (target, prefix: string, meta: Method) => {
         name: param.name,
         required: param.required,
         type: param.type,
-        description: param.desc
+        description: param.desc,
       };
       method.parameters.push(paramter);
     }
@@ -104,7 +103,11 @@ const handlePath = (target, prefix: string, meta: Method) => {
   method.summary = meta.summary;
   method.responses = [];
 };
-export function registerService(app, serviceClazzes: any[], config: any) {
+export function registerService(
+  app: Application,
+  serviceClazzes: any[],
+  config: any
+) {
   let swaggerDoc: ISwagger;
   swaggerDoc = config;
   serviceClazzes.forEach((ServiceClazz) => {
@@ -145,6 +148,7 @@ export function registerService(app, serviceClazzes: any[], config: any) {
       });
       params.push(upload.fields(files));
       params.push(fn);
+      router.register;
       router[httpMethod](...params);
     }
     swaggerDoc.tags = swaggerDoc.tags.concat(ServiceClazz.prototype.docs.tags);

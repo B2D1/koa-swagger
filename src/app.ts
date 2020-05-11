@@ -1,7 +1,7 @@
-import * as Koa from 'koa';
-import * as bodyParser from 'koa-bodyparser';
-import * as Static from 'koa-static';
-import * as path from 'path';
+import Koa from 'koa';
+import bodyParser from 'koa-bodyparser';
+import Static from 'koa-static';
+import path from 'path';
 
 import TodoService from './services/todo';
 import UserService from './services/user';
@@ -13,7 +13,7 @@ const swaggerConfig = {
   tags: [],
   host: 'localhost:3000',
   paths: {},
-  info: { description: 'Swagger文档', version: '1.0.0', title: 'Koa-server' }
+  info: { description: 'Swagger文档', version: '1.0.0', title: 'Koa-server' },
 };
 app.use(bodyParser());
 

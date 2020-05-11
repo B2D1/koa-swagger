@@ -28,7 +28,7 @@ export default class UserService {
     @Paramter(ParamterIn.Path, 'id', '用户 ID', ParamterType.integer, true)
     id: number
   ) {
-    return { userId: id };
+    return { userId: id + 1 };
   }
   @DELETE('/:id')
   @Summary('通过用户 ID 删除用户')
@@ -67,11 +67,29 @@ export default class UserService {
   @POST('/:id')
   @Summary('通过 Form-data 更新用户')
   updateUserWithForm(
-    @Paramter(ParamterIn.Path, 'id', '要更新的用户 ID', ParamterType.integer, true)
+    @Paramter(
+      ParamterIn.Path,
+      'id',
+      '要更新的用户 ID',
+      ParamterType.integer,
+      true
+    )
     id: number,
-    @Paramter(ParamterIn.FormData, 'usr', '更新后的用户名', ParamterType.string, false)
+    @Paramter(
+      ParamterIn.FormData,
+      'usr',
+      '更新后的用户名',
+      ParamterType.string,
+      false
+    )
     usr: string,
-    @Paramter(ParamterIn.FormData, 'psd', '更新后的密码', ParamterType.string, false)
+    @Paramter(
+      ParamterIn.FormData,
+      'psd',
+      '更新后的密码',
+      ParamterType.string,
+      false
+    )
     psd: string
   ) {
     return { id, usr, psd };
@@ -79,11 +97,29 @@ export default class UserService {
   @POST('/:id/uploadImage')
   @Summary('更新用户头像')
   uploadFile(
-    @Paramter(ParamterIn.Path, 'id', '要更新的用户 ID', ParamterType.integer, true)
+    @Paramter(
+      ParamterIn.Path,
+      'id',
+      '要更新的用户 ID',
+      ParamterType.integer,
+      true
+    )
     id: number,
-    @Paramter(ParamterIn.FormData, 'file1', '要上传的文件①', ParamterType.file, false)
+    @Paramter(
+      ParamterIn.FormData,
+      'file1',
+      '要上传的文件①',
+      ParamterType.file,
+      false
+    )
     file1: File,
-    @Paramter(ParamterIn.FormData, 'file2', '要上传的文件②', ParamterType.file, false)
+    @Paramter(
+      ParamterIn.FormData,
+      'file2',
+      '要上传的文件②',
+      ParamterType.file,
+      false
+    )
     file2: File
   ) {
     return { id, file1, file2 };
